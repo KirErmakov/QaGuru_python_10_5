@@ -1,5 +1,4 @@
 from selene import browser, be, have, by
-import time
 import os
 
 def test_fill_form_user_flow():
