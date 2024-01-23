@@ -56,29 +56,3 @@ def test_fill_form_user_flow():
 
 
 
-    time.sleep(3)
-
-def test_fill_form_automation_flow():
-    browser.open('/')
-    browser.execute_script('document.querySelector("#fixedban").remove()')
-    browser.execute_script('document.querySelector("footer").remove()')
-
-    browser.element('#firstName').type('Kuraj')
-    browser.element('#lastName').type('Bombei')
-    browser.element('#userEmail').type('kjb@gmail.com')
-    browser.element("label[for='gender-radio-1']").click()
-    browser.element('#userNumber').type()
-    #browser.element('#dateOfBirthInput').clear().type(birthDate)
-    browser.element('#subjectsInput').type('Computer Science').press_enter()
-    browser.element("label[for='hobbies-checkbox-1']").click()
-    browser.element("label[for='hobbies-checkbox-3']").click()
-    browser.element('#currentAddress').should(be.blank)
-
-    browser.element('#state').click()
-    browser.all('#state div').element_by(have.exact_text('NCR')).click()
-    browser.element('#city').click()
-    browser.all('#city div').element_by(have.exact_text('Delhi')).click()
-    browser.element('#submit').click()
-    time.sleep(5)
-
-

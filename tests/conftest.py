@@ -8,8 +8,3 @@ def browser_manage():
     browser.config.window_height = 1080
     yield
     browser.quit()
-
-@pytest.fixture()
-def js_commands():
-    browser.config.type_by_js = True
-    browser.config.click_by_js = True
