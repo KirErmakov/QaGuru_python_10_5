@@ -1,8 +1,13 @@
-from selene import browser, be, have, by
+from selene import browser, command, be, have, by
+from selene.support.shared.jquery_style import s
+from selenium.webdriver import Keys
 import os
+from pathlib import Path
+import tests
+
 
 def test_fill_form_user_flow():
-    browser.open('/')
+    browser.open('/automation-practice-form')
     # Убрать баннер и footer, закрывающие кнопку "Submit"
     browser.execute_script('document.querySelector("#fixedban").remove()')
     browser.execute_script('document.querySelector("footer").remove()')
@@ -54,4 +59,44 @@ def test_fill_form_user_flow():
     )
 
 
+def test_fill_form_automation_flow():
+    browser.open('/automation-practice-form')
+    browser.all('[id^=google_ads][id$=container__]').with_(timeout=10).should(
+        have.size_greater_than_or_equal(3)
+    ).perform(command.js.remove)
 
+# WHEN
+    s('#firstName').should(be.blank).type('Kuraj')
+    s('#lastName').should(be.blank).type('Bombei')
+    s('#userEmail').should(be.blank).type('kjb@gmail.com')
+    browser.all('[for^=gender-radio]').element_by(have.exact_text('Male')).click()
+    s('#userNumber').type('9876543210')
+    s('#dateOfBirthInput').send_keys(Keys.CONTROL, 'a').type('31 December 1991').press_enter()
+
+    s('#subjectsInput').set_value('Computer Science').press_enter()
+    browser.all('[for^=hobbies-checkbox]').element_by(have.exact_text('Sports')).click()
+
+    s('#uploadPicture').set_value(str(Path(tests.__file__).parent.joinpath('files/Rajesh.jpg').absolute()))
+    s('#currentAddress').should(be.blank).perform((command.js.set_value('Somewhere in India')))
+    s('#state').click()
+    browser.all('[id^=react-select][id*=option]').element_by(have.exact_text('NCR')).click()
+    s('#city').click()
+    browser.all('[id^=react-select][id*=option]').element_by(have.exact_text('Delhi')).click()
+    s('#submit').perform(command.js.click)
+
+# THEN
+    browser.element('#example-modal-sizes-title-lg').should(have.exact_text('Thanks for submitting the form'))
+    browser.element('.table').all('td').even.should(
+        have.texts(
+            'Kuraj Bombei',
+            'kjb@gmail.com',
+            'Male',
+            '9876543210',
+            '31 December,1991',
+            'Computer Science',
+            'Sports',
+            'Rajesh.jpg',
+            'Somewhere in India',
+            'NCR Delhi'
+        )
+    )
